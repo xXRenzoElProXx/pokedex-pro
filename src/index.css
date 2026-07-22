@@ -1,0 +1,239 @@
+@import 'tailwindcss';
+
+/* Class-based theme variants: toggled via `.dark` / `.light` on <html> (controlled by Zustand theme store) */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+@theme {
+  /* ---- Typography (design-system.md: Inter en todo el producto) ---- */
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ---- Brand palette ----
+     Scarlet: primary accent — remapped to the design-system.md red→orange
+     brand hue (red-600 → orange-600), applied literally across the app.
+     Azure: secondary accent, used for links / secondary actions / focus.
+     Amber: tertiary accent, reserved for favorites / ratings. */
+  --color-scarlet-50: #fff1e9;
+  --color-scarlet-100: #ffe0cc;
+  --color-scarlet-200: #ffc199;
+  --color-scarlet-300: #fdaa73;
+  --color-scarlet-400: #fb923c;
+  --color-scarlet-500: #dc2626;
+  --color-scarlet-600: #ea580c;
+  --color-scarlet-700: #9a2210;
+  --color-scarlet-800: #7c1c08;
+  --color-scarlet-900: #5c1506;
+
+  --color-azure-50: #eef4ff;
+  --color-azure-100: #dbe7ff;
+  --color-azure-200: #b8cfff;
+  --color-azure-300: #8babff;
+  --color-azure-400: #5c81f7;
+  --color-azure-500: #2f6fe4;
+  --color-azure-600: #2255bd;
+  --color-azure-700: #1c4494;
+  --color-azure-800: #17376f;
+  --color-azure-900: #132c56;
+
+  --color-amber-glow: #f5a623;
+
+  /* ---- Neutral surfaces (dark-first product) ---- */
+  --color-ink-950: #120607;
+  --color-ink-900: #14151c;
+  --color-ink-800: #1c1e27;
+  --color-ink-700: #262834;
+  --color-ink-600: #383b4a;
+  --color-ink-500: #9c979d;
+  --color-ink-400: #bab6ba;
+  --color-ink-300: #9a9cb0;
+  --color-ink-200: #c2c4d2;
+  --color-ink-100: #e3e4ec;
+  --color-ink-50: #f4f4f8;
+
+  --color-parchment-50: #faf8f2;
+  --color-parchment-100: #f7f4ee;
+  --color-parchment-200: #efe9dc;
+
+  /* ---- Motion ---- */
+  --ease-dex: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- Base element styles ---- */
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    /* Red de seguridad: ningún elemento del layout debería generar scroll
+       horizontal, pero esto evita que un desborde puntual (ej. un nombre
+       muy largo o una imagen externa con proporciones inesperadas) rompa
+       la experiencia completa de la página. */
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-ink-950 text-ink-50 font-sans antialiased;
+    font-feature-settings: 'ss01' 1;
+  }
+
+  html.light body {
+    @apply bg-parchment-100 text-ink-900;
+  }
+
+  ::selection {
+    @apply bg-scarlet-500/30 text-inherit;
+  }
+
+  /* Visible keyboard focus everywhere, no exceptions */
+  :focus-visible {
+    outline: 2px solid var(--color-scarlet-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-700 rounded-full;
+  }
+  html.light ::-webkit-scrollbar-thumb {
+    @apply bg-ink-200;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---- "Generador de Contraseñas" design-system tokens ----
+   Used literally (by request) on the Pokémon detail page only — kept scoped
+   here rather than folded into the app's own scarlet/azure/ink system above. */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-inset {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.light .glass {
+  background: rgba(28, 30, 39, 0.04);
+  border: 1px solid rgba(28, 30, 39, 0.1);
+}
+
+html.light .glass-inset {
+  background: rgba(28, 30, 39, 0.06);
+  border: 1px solid rgba(28, 30, 39, 0.08);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(18px, -24px);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-22px, 18px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes char-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 14s var(--ease-dex, ease-in-out) infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 18s var(--ease-dex, ease-in-out) infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.animate-char-reveal {
+  animation: char-reveal 0.35s ease-out both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-in {
+  animation: page-in 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
